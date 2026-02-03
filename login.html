@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alke Wallet - Inicio de Sesión</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Patrón de fondo */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            animation: slideIn 0.5s ease;
+            position: relative;
+            z-index: 1;
+        }
+        
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Logo y Marca */
+        .brand-container {
+            text-align: center;
+            margin-bottom: 35px;
+        }
+        
+        .brand-logo {
+            width: 90px;
+            height: 90px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            font-size: 45px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            animation: pulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+            }
+            50% {
+                transform: scale(1.05);
+                box-shadow: 0 15px 40px rgba(102, 126, 234, 0.6);
+            }
+        }
+        
+        .brand-name {
+            font-size: 32px;
+            font-weight: 800;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 5px;
+            letter-spacing: -1px;
+        }
+        
+        .brand-tagline {
+            font-size: 13px;
+            color: #888;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+        
+        .brand-trademark {
+            font-size: 10px;
+            vertical-align: super;
+            opacity: 0.7;
+        }
+        
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: 600;
+            font-size: 24px;
+        }
+        
+        .form-label {
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 20px;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-login:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 20px;
+            color: #666;
+        }
+        
+        .register-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .credentials-hint {
+            background: linear-gradient(135deg, #e7f3ff 0%, #f0e7ff 100%);
+            border-left: 4px solid #667eea;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .credentials-hint strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #667eea;
+        }
+        
+        #alert-container {
+            margin-bottom: 20px;
+        }
+        
+        .footer-brand {
+            text-align: center;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+            color: #999;
+            font-size: 12px;
+        }
+        
+        .footer-brand strong {
+            color: #667eea;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <!-- Marca Alke Wallet -->
+        <div class="brand-container">
+            <div class="brand-logo">💳</div>
+            <h1 class="brand-name">Alke Wallet<span class="brand-trademark">®</span></h1>
+            <p class="brand-tagline">Tu billetera digital</p>
+        </div>
+        
+        <h2>Inicio de sesión</h2>
+        
+        <div class="credentials-hint">
+            <strong>📌 Credenciales de prueba:</strong>
+            Email: usuario@wallet.com<br>
+            Contraseña: 123456
+        </div>
+        
+        <div id="alert-container"></div>
+        
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email" placeholder="Ingresa tu email" required>
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">Contraseña</label>
+                <input type="password" class="form-control" id="password" placeholder="Ingresa tu contraseña" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-login" id="loginBtn">Iniciar sesión</button>
+        </form>
+        
+        <div class="register-link">
+            ¿No tienes cuenta? <a href="#">Regístrate aquí</a>
+        </div>
+        
+        <div class="footer-brand">
+            Powered by <strong>Alke Wallet</strong> © 2024
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Credenciales válidas
+            const VALID_CREDENTIALS = {
+                email: 'usuario@wallet.com',
+                password: '123456'
+            };
+            
+            // Función para mostrar alerta de Bootstrap
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('#alert-container').html(alertHtml);
+            }
+            
+            // Manejar el envío del formulario con jQuery
+            $('#loginForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Limpiar alertas previas
+                $('#alert-container').empty();
+                
+                // Obtener valores con jQuery
+                const email = $('#email').val().trim();
+                const password = $('#password').val();
+                
+                // Validar campos vacíos
+                if (!email || !password) {
+                    showAlert('<strong>Error:</strong> Por favor completa todos los campos.', 'danger');
+                    return;
+                }
+                
+                // Deshabilitar botón durante validación
+                $('#loginBtn').prop('disabled', true).text('Validando...');
+                
+                // Simular validación (en producción sería una llamada a API)
+                setTimeout(function() {
+                    if (email === VALID_CREDENTIALS.email && password === VALID_CREDENTIALS.password) {
+                        // Credenciales correctas - Alerta de Bootstrap
+                        showAlert('<strong>✓ ¡Bienvenido a Alke Wallet!</strong><br>Redirigiendo al menú principal...', 'success');
+                        
+                        // Guardar sesión en localStorage
+                        localStorage.setItem('userEmail', email);
+                        localStorage.setItem('isLoggedIn', 'true');
+                        
+                        // Inicializar saldo si no existe
+                        if (!localStorage.getItem('balance')) {
+                            localStorage.setItem('balance', '15420.50');
+                        }
+                        
+                        // Redirigir con jQuery después de 1.5 segundos
+                        setTimeout(function() {
+                            window.location.href = 'menu.html';
+                        }, 1500);
+                        
+                    } else {
+                        // Credenciales incorrectas - Alerta de Bootstrap
+                        showAlert('<strong>✗ Error de autenticación</strong><br>Las credenciales ingresadas son incorrectas.', 'danger');
+                        
+                        // Habilitar botón nuevamente
+                        $('#loginBtn').prop('disabled', false).text('Iniciar sesión');
+                        
+                        // Marcar campos como inválidos
+                        $('#email, #password').addClass('is-invalid');
+                    }
+                }, 800);
+            });
+            
+            // Limpiar estado de error al escribir
+            $('#email, #password').on('input', function() {
+                $(this).removeClass('is-invalid');
+                $('#alert-container').empty();
+            });
+        });
+    </script>
+</body>
+</html>
