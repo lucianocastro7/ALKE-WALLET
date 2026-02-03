@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enviar Dinero - Billetera Digital</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .send-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+        
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        
+        .send-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 35px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-add-contact {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            padding: 12px;
+            width: 100%;
+            font-weight: 600;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-add-contact:hover {
+            background: #667eea;
+            color: white;
+        }
+        
+        #add-contact-form {
+            display: none;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .contacts-list {
+            margin-top: 20px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .contact-item {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .contact-item:hover {
+            background: #e9ecef;
+            transform: translateX(5px);
+        }
+        
+        .contact-item.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .contact-item.selected .contact-details h6,
+        .contact-item.selected .contact-details p {
+            color: white;
+        }
+        
+        .contact-avatar {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+        
+        .contact-item.selected .contact-avatar {
+            background: white;
+            color: #667eea;
+        }
+        
+        .contact-details h6 {
+            margin: 0;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .contact-details p {
+            margin: 0;
+            font-size: 12px;
+            color: #888;
+        }
+        
+        #send-money-section {
+            display: none;
+            background: #e7f3ff;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            border-radius: 10px;
+            margin-top: 20px;
+        }
+        
+        .btn-send {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+        }
+        
+        #confirmation-message {
+            display: none;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" id="backBtn">← Atrás</button>
+        
+        <div class="send-card">
+            <div class="send-icon">📤</div>
+            <h2>Enviar Dinero</h2>
+            
+            <div class="alert alert-info">
+                <strong>💰 Saldo disponible:</strong> <span id="currentBalance">$0.00</span>
+            </div>
+            
+            <div id="alert-container"></div>
+            
+            <button class="btn btn-add-contact" id="toggleContactForm">+ Agregar nuevo contacto</button>
+            
+            <!-- Formulario para agregar contacto -->
+            <div id="add-contact-form">
+                <h5 class="mb-3">Nuevo Contacto</h5>
+                <form id="addContactForm">
+                    <div class="mb-3">
+                        <label class="form-label">Nombre y Apellido *</label>
+                        <input type="text" class="form-control" id="contactName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Número de CBU * (22 dígitos)</label>
+                        <input type="text" class="form-control" id="contactCBU" maxlength="22" pattern="[0-9]{22}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Alias *</label>
+                        <input type="text" class="form-control" id="contactAlias" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Nombre del Banco *</label>
+                        <input type="text" class="form-control" id="contactBank" required>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">Agregar</button>
+                        <button type="button" class="btn btn-secondary" id="cancelContactForm">Cancelar</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Búsqueda -->
+            <form id="searchForm" class="mb-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="searchInput" placeholder="Buscar por nombre o alias">
+                    <button class="btn btn-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+            
+            <!-- Lista de contactos -->
+            <div class="contacts-list" id="contactsList"></div>
+            
+            <!-- Sección de envío de dinero -->
+            <div id="send-money-section">
+                <h5 class="mb-3">💸 Enviar dinero a: <span id="selectedContactName"></span></h5>
+                <form id="sendMoneyForm">
+                    <div class="mb-3">
+                        <label class="form-label">Monto *</label>
+                        <input type="number" class="form-control" id="sendAmount" min="1" step="0.01" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Mensaje (opcional)</label>
+                        <textarea class="form-control" id="sendMessage" rows="2" maxlength="100"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-send">Enviar Dinero</button>
+                </form>
+            </div>
+            
+            <!-- Mensaje de confirmación -->
+            <div id="confirmation-message"></div>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            let balance = parseFloat(localStorage.getItem('balance')) || 15420.50;
+            $('#currentBalance').text(`$${balance.toFixed(2)}`);
+            
+            let contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
+            if (contacts.length === 0) {
+                contacts = [
+                    { name: 'María González', cbu: '0170099820000012345678', alias: 'MARIA.GONZALEZ', bank: 'Banco Galicia' },
+                    { name: 'Juan Pérez', cbu: '0340099812345678901234', alias: 'JUAN.PEREZ', bank: 'Banco Patagonia' },
+                    { name: 'Ana Silva', cbu: '0720099887654321098765', alias: 'ANA.SILVA.22', bank: 'Banco Santander' }
+                ];
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+            }
+            
+            let selectedContact = null;
+            
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('#alert-container').html(alertHtml);
+            }
+            
+            // Mostrar/ocultar formulario de agregar contacto con jQuery
+            $('#toggleContactForm').on('click', function() {
+                $('#add-contact-form').slideToggle(300);
+            });
+            
+            $('#cancelContactForm').on('click', function() {
+                $('#add-contact-form').slideUp(300);
+                $('#addContactForm')[0].reset();
+            });
+            
+            // Validar y agregar contacto
+            $('#addContactForm').submit(function(e) {
+                e.preventDefault();
+                
+                const name = $('#contactName').val().trim();
+                const cbu = $('#contactCBU').val().trim();
+                const alias = $('#contactAlias').val().trim().toUpperCase();
+                const bank = $('#contactBank').val().trim();
+                
+                // Validar CBU
+                if (cbu.length !== 22 || !/^\d+$/.test(cbu)) {
+                    showAlert('<strong>Error:</strong> El CBU debe tener exactamente 22 dígitos numéricos.', 'danger');
+                    return;
+                }
+                
+                // Validar campos vacíos
+                if (!name || !alias || !bank) {
+                    showAlert('<strong>Error:</strong> Todos los campos son obligatorios.', 'danger');
+                    return;
+                }
+                
+                contacts.push({ name, cbu, alias, bank });
+                localStorage.setItem('contacts', JSON.stringify(contacts));
+                
+                showAlert(`<strong>✓ Contacto agregado:</strong> ${name}`, 'success');
+                $('#add-contact-form').slideUp(300);
+                this.reset();
+                displayContacts();
+            });
+            
+            // Búsqueda de contactos con jQuery
+            $('#searchForm').submit(function(e) {
+                e.preventDefault();
+                const searchTerm = $('#searchInput').val().toLowerCase();
+                displayContacts(searchTerm);
+            });
+            
+            $('#searchInput').on('input', function() {
+                const searchTerm = $(this).val().toLowerCase();
+                displayContacts(searchTerm);
+            });
+            
+            // Mostrar contactos con jQuery
+            function displayContacts(filter = '') {
+                const filtered = contacts.filter(c => 
+                    c.name.toLowerCase().includes(filter) ||
+                    c.alias.toLowerCase().includes(filter)
+                );
+                
+                if (filtered.length === 0) {
+                    $('#contactsList').html('<p class="text-center text-muted">No se encontraron contactos</p>');
+                    return;
+                }
+                
+                let html = '';
+                filtered.forEach((c, index) => {
+                    html += `
+                        <div class="contact-item" data-index="${contacts.indexOf(c)}">
+                            <div class="d-flex align-items-center">
+                                <div class="contact-avatar">${c.name.charAt(0)}</div>
+                                <div class="contact-details">
+                                    <h6>${c.name}</h6>
+                                    <p>${c.alias} • ${c.bank}</p>
+                                </div>
+                            </div>
+                            <span>→</span>
+                        </div>
+                    `;
+                });
+                
+                $('#contactsList').html(html);
+            }
+            
+            // Seleccionar contacto y mostrar botón de enviar dinero
+            $(document).on('click', '.contact-item', function() {
+                const index = $(this).data('index');
+                selectedContact = contacts[index];
+                
+                // Resaltar contacto seleccionado
+                $('.contact-item').removeClass('selected');
+                $(this).addClass('selected');
+                
+                // Mostrar sección de envío
+                $('#selectedContactName').text(selectedContact.name);
+                $('#send-money-section').slideDown(300);
+                $('#confirmation-message').slideUp(300);
+            });
+            
+            // Enviar dinero
+            $('#sendMoneyForm').submit(function(e) {
+                e.preventDefault();
+                
+                const amount = parseFloat($('#sendAmount').val());
+                const message = $('#sendMessage').val();
+                
+                if (!amount || amount <= 0) {
+                    showAlert('<strong>Error:</strong> Ingresa un monto válido.', 'danger');
+                    return;
+                }
+                
+                if (amount > balance) {
+                    showAlert('<strong>Error:</strong> Saldo insuficiente para realizar la transferencia.', 'danger');
+                    return;
+                }
+                
+                if (!confirm(`¿Confirmas la transferencia de $${amount.toFixed(2)} a ${selectedContact.name}?`)) {
+                    return;
+                }
+                
+                const oldBalance = balance;
+                balance -= amount;
+                localStorage.setItem('balance', balance.toString());
+                $('#currentBalance').text(`$${balance.toFixed(2)}`);
+                
+                const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                transactions.unshift({
+                    type: 'transfer',
+                    amount: -amount,
+                    date: new Date().toISOString(),
+                    description: `Transferencia a ${selectedContact.name}`,
+                    recipient: selectedContact.name,
+                    cbu: selectedContact.cbu,
+                    message: message,
+                    previousBalance: oldBalance,
+                    newBalance: balance
+                });
+                localStorage.setItem('transactions', JSON.stringify(transactions));
+                
+                // Mostrar mensaje de confirmación en la parte inferior
+                const confirmHtml = `
+                    <div class="alert alert-success">
+                        <h5>✓ ¡Envío realizado con éxito!</h5>
+                        <p><strong>Destinatario:</strong> ${selectedContact.name}</p>
+                        <p><strong>Monto:</strong> $${amount.toFixed(2)}</p>
+                        <p><strong>Nuevo saldo:</strong> $${balance.toFixed(2)}</p>
+                        ${message ? `<p><strong>Mensaje:</strong> ${message}</p>` : ''}
+                    </div>
+                `;
+                
+                $('#confirmation-message').html(confirmHtml).slideDown(300);
+                $('#send-money-section').slideUp(300);
+                this.reset();
+                
+                setTimeout(() => {
+                    $('#confirmation-message').slideUp(300);
+                }, 5000);
+            });
+            
+            $('#backBtn').on('click', function() {
+                window.location.href = 'menu.html';
+            });
+            
+            displayContacts();
+        });
+    </script>
+</body>
+</html>
