@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alke Wallet - Depositar</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        .deposit-card {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: slideUp 0.5s ease;
+        }
+        
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .back-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateX(-5px);
+        }
+        
+        h2 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        
+        .deposit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            font-size: 35px;
+        }
+        
+        .form-label {
+            color: #555;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+        
+        .form-control {
+            border-radius: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .amount-buttons {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .amount-btn {
+            background: #f8f9fa;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        .amount-btn:hover, .amount-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+            transform: scale(1.05);
+        }
+        
+        .btn-deposit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            font-weight: 600;
+            font-size: 16px;
+            width: 100%;
+            margin-top: 10px;
+            transition: transform 0.2s ease;
+        }
+        
+        .btn-deposit:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-deposit:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+        
+        .current-balance {
+            text-align: center;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .balance-label {
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .balance-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: #667eea;
+            transition: all 0.3s ease;
+        }
+        
+        #alert-container {
+            margin-bottom: 15px;
+        }
+        
+        #deposit-info {
+            margin-top: 15px;
+            padding: 15px;
+            background: #d1ecf1;
+            border-left: 4px solid #0c5460;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        #deposit-info strong {
+            color: #0c5460;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="back-btn" id="backBtn">← Atrás</button>
+        
+        <div class="deposit-card">
+            <div class="deposit-icon">💰</div>
+            <h2>Depositar</h2>
+            
+            <div class="current-balance">
+                <div class="balance-label">Saldo actual</div>
+                <div class="balance-value" id="currentBalance">$0.00</div>
+            </div>
+            
+            <div id="alert-container"></div>
+            
+            <form id="depositForm">
+                <div class="mb-3">
+                    <label for="amount" class="form-label">Monto a depositar</label>
+                    <input type="number" class="form-control" id="amount" placeholder="Ingresa el monto" min="1" step="0.01" required>
+                </div>
+                
+                <div class="amount-buttons">
+                    <button type="button" class="btn amount-btn" data-amount="100">$100</button>
+                    <button type="button" class="btn amount-btn" data-amount="500">$500</button>
+                    <button type="button" class="btn amount-btn" data-amount="1000">$1000</button>
+                    <button type="button" class="btn amount-btn" data-amount="2000">$2000</button>
+                    <button type="button" class="btn amount-btn" data-amount="5000">$5000</button>
+                    <button type="button" class="btn amount-btn" data-amount="10000">$10000</button>
+                </div>
+                
+                <div id="deposit-info">
+                    <strong>💰 Monto a depositar:</strong> <span id="depositAmount">$0.00</span>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-deposit" id="depositBtn">Realizar depósito</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            // Verificar si el usuario está logueado
+            if (!localStorage.getItem('isLoggedIn')) {
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            // Obtener y mostrar saldo actual desde localStorage con jQuery
+            let balance = parseFloat(localStorage.getItem('balance')) || 15420.50;
+            $('#currentBalance').text(`$${balance.toFixed(2)}`);
+            
+            // Función para mostrar alerta de Bootstrap
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                $('#alert-container').html(alertHtml);
+            }
+            
+            // Evento click en botones de monto rápido con jQuery
+            $('.amount-btn').on('click', function() {
+                const amount = $(this).data('amount');
+                
+                // Establecer valor en el input
+                $('#amount').val(amount);
+                
+                // Resaltar botón seleccionado
+                $('.amount-btn').removeClass('selected');
+                $(this).addClass('selected');
+                
+                // Mostrar leyenda con el monto
+                $('#depositAmount').text(`$${amount.toFixed(2)}`);
+                $('#deposit-info').fadeIn(300);
+            });
+            
+            // Mostrar leyenda cuando se escribe en el input
+            $('#amount').on('input', function() {
+                const amount = parseFloat($(this).val());
+                
+                if (amount && amount > 0) {
+                    $('#depositAmount').text(`$${amount.toFixed(2)}`);
+                    $('#deposit-info').fadeIn(300);
+                } else {
+                    $('#deposit-info').fadeOut(300);
+                }
+                
+                // Quitar selección de botones
+                $('.amount-btn').removeClass('selected');
+            });
+            
+            // Manejar envío del formulario con jQuery
+            $('#depositForm').submit(function(e) {
+                e.preventDefault();
+                
+                // Limpiar alertas previas
+                $('#alert-container').empty();
+                
+                // Obtener monto con jQuery
+                const amount = parseFloat($('#amount').val());
+                
+                // Validaciones
+                if (!amount || amount <= 0) {
+                    showAlert('<strong>Error:</strong> Por favor ingresa un monto válido mayor a $0.', 'danger');
+                    return;
+                }
+                
+                if (amount > 1000000) {
+                    showAlert('<strong>Error:</strong> El monto máximo por depósito es $1,000,000.', 'danger');
+                    return;
+                }
+                
+                // Deshabilitar botón durante procesamiento
+                $('#depositBtn').prop('disabled', true).text('Procesando...');
+                
+                // Simular procesamiento
+                setTimeout(function() {
+                    const oldBalance = balance;
+                    balance += amount;
+                    
+                    // Actualizar localStorage
+                    localStorage.setItem('balance', balance.toString());
+                    
+                    // Guardar transacción
+                    const transactions = JSON.parse(localStorage.getItem('transactions') || '[]');
+                    transactions.unshift({
+                        type: 'deposit',
+                        amount: amount,
+                        date: new Date().toISOString(),
+                        description: 'Depósito a cuenta',
+                        previousBalance: oldBalance,
+                        newBalance: balance
+                    });
+                    localStorage.setItem('transactions', JSON.stringify(transactions));
+                    
+                    // Actualizar saldo en pantalla con jQuery
+                    $('#currentBalance').text(`$${balance.toFixed(2)}`);
+                    
+                    // Mostrar alerta de éxito de Bootstrap
+                    showAlert(`
+                        <strong>✓ ¡Depósito realizado con éxito!</strong><br>
+                        Has depositado: <strong>$${amount.toFixed(2)}</strong><br>
+                        Nuevo saldo: <strong>$${balance.toFixed(2)}</strong><br>
+                        <small>Redirigiendo al menú principal en 2 segundos...</small>
+                    `, 'success');
+                    
+                    // Limpiar formulario
+                    $('#amount').val('');
+                    $('#deposit-info').fadeOut(300);
+                    $('.amount-btn').removeClass('selected');
+                    
+                    // Habilitar botón
+                    $('#depositBtn').prop('disabled', false).text('Realizar depósito');
+                    
+                    // Redirigir después de 2 segundos con jQuery
+                    setTimeout(function() {
+                        window.location.href = 'menu.html';
+                    }, 2000);
+                    
+                }, 1000);
+            });
+            
+            // Botón atrás con jQuery
+            $('#backBtn').on('click', function() {
+                window.location.href = 'menu.html';
+            });
+        });
+    </script>
+</body>
+</html>
