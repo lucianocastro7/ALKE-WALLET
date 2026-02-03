@@ -24,3 +24,5 @@ El objetivo del proyecto es implementar la **vista de una Wallet digital**, apli
 - Visualización de transacciones
 - Depósitos y visualización de saldo
 
+Proyecto desarrollado con HTML, CSS, JavaScript y Bootstrap.
+Se utiliza jQuery para manipulación del DOM.
